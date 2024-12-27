@@ -9,37 +9,42 @@ terraform {
 
 provider "aws" {
   region = "us-east-1"
-  access_key = ""
-  secret_key = ""
 }
 
-data "aws_ami" "this" {
-  most_recent = true
-  owners = ["amazon"]
-  
-  filter {
-    name = "architecture"
-    values = ["x86_64"]
-  }
-  
-  filter {
-    name = "name"
-    values = ["0e86e20dae9224db8"]
+resource "aws_iam_user" "usuario_avera" {
+  name = "Avera" 
+}
+
+resource "aws_iam_user_login_profile" "avera_user_password"{
+  user = aws_iam_user.usuario_avera.name
+}
+
+output "password_usuario_avera" {
+  value = aws_iam_user_login_profile.avera_user_password.password
+  sensitive = true
+}
+
+locals {
+  ami = "ami-0e86e20dae9224db8"
+  instance_type = var.instance_type
+  tags = {
+    Name1 = "ec1"
+    Name2 = "ec2"
   }
 }
 
 resource "aws_instance" "primeira_ec2" {
-  ami = data.aws_ami.this.id
-  instance_type = "t2.micro"
+  ami = local.ami 
+  instance_type = local.instance_type 
   tags = {
-    Name = "segunda_ec2"
+    Name = local.tags.Name1 
   }
 }
 
 resource "aws_instance" "segunda_ec2" {
-  ami = "ami-0e86e20dae9224db8"
-  instance_type = "t2.micro"
+  ami = local.ami
+  instance_type = local.instance_type
   tags = {
-    Name = "segunda_ec2"
+    Name = local.tags.Name2
   }
 }
