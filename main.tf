@@ -16,7 +16,8 @@ resource "aws_iam_user" "usuario_avera" {
 }
 
 resource "aws_iam_user_login_profile" "avera_user_password"{
-  user = aws_iam_user.usuario_avera.name
+  user = "Avera"  
+  depends_on = [aws_iam_user.usuario_avera]
 }
 
 output "password_usuario_avera" {
